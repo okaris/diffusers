@@ -1209,8 +1209,10 @@ class StableDiffusionXLPipeline(
                 if ip_adapter_image is not None:
                     added_cond_kwargs["image_embeds"] = image_embeds
                     if t < ip_adapter_conditioning_timesteps_start and t > ip_adapter_conditioning_timesteps_end:
+                        print(f"Setting ip_adapter_scale to 0.0 at timestep {t}")
                         self.set_ip_adapter_scale(0.0)
                     else:
+                        print(f"Setting ip_adapter_scale to {ip_adapter_scale} at timestep {t}")
                         self.set_ip_adapter_scale(ip_adapter_scale)
                 noise_pred = self.unet(
                     latent_model_input,

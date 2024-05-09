@@ -460,6 +460,7 @@ class LCMScheduler(SchedulerMixin, ConfigMixin):
                 )
 
             skipping_step = len(lcm_origin_timesteps) // num_inference_steps
+            print("original_steps", original_steps, "strength", strength, "skipping_step", skipping_step, "num_inference_steps", num_inference_steps, "lcm_origin_timesteps", lcm_origin_timesteps, "len(lcm_origin_timesteps)", len(lcm_origin_timesteps))
 
             if skipping_step < 1:
                 raise ValueError(

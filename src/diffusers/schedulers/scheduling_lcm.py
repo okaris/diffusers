@@ -399,6 +399,13 @@ class LCMScheduler(SchedulerMixin, ConfigMixin):
         # Currently, only a linearly-spaced schedule is supported (same as in the LCM distillation scripts).
         lcm_origin_timesteps = np.asarray(list(range(1, int(original_steps * strength) + 1))) * k - 1
 
+        if len(lcm_origin_timesteps) == 0:
+            raise ValueError(
+                f"The combination of `original_steps x strength`: {original_steps} x {strength} is smaller than 1."
+                f"This means the number of steps is smaller than 1 with the current configuration which is not possible."
+                f" Make sure to increase `strength` to a value higher than {1 / original_steps}"
+            )
+
         # 2. Calculate the LCM inference timestep schedule.
         if timesteps is not None:
             # 2.1 Handle custom timestep schedules.
@@ -457,13 +464,6 @@ class LCMScheduler(SchedulerMixin, ConfigMixin):
                     f"`num_inference_steps`: {num_inference_steps} cannot be larger than `self.config.train_timesteps`:"
                     f" {self.config.num_train_timesteps} as the unet model trained with this scheduler can only handle"
                     f" maximal {self.config.num_train_timesteps} timesteps."
-                )
-
-            skipping_step = len(lcm_origin_timesteps) // num_inference_steps
-
-            if skipping_step < 1:
-                raise ValueError(
-                    f"The combination of `original_steps x strength`: {original_steps} x {strength} is smaller than `num_inference_steps`: {num_inference_steps}. Make sure to either reduce `num_inference_steps` to a value smaller than {int(original_steps * strength)} or increase `strength` to a value higher than {float(num_inference_steps / original_steps)}."
                 )
 
             self.num_inference_steps = num_inference_steps
